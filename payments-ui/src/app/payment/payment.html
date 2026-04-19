@@ -1,0 +1,17 @@
+<div style="padding: 24px; max-width: 700px; margin: auto; font-family: Arial;">
+  <h1>Payment Portfolio App</h1>
+
+  <label>Amount:</label>
+  <input [(ngModel)]="amount" type="number" />
+  <button (click)="createFlow()">Create Order + Payment</button>
+
+  <div *ngIf="order" style="margin-top: 20px;">
+    <h3>Order</h3>
+    <pre>{{ order | json }}</pre>
+  </div>
+
+  <div *ngIf="payment" style="margin-top: 20px;">
+    <h3>Payment</h3>
+    <pre>{{ payment | json }}</pre>
+  </div>
+</div>
