@@ -1,5 +1,7 @@
 package payment.payment_service.service;
 
+
+
 import java.time.Instant;
 import java.util.UUID;
 
@@ -46,16 +48,22 @@ public class PaymentService {
                 System.out.println("✅ Returning cached payment response for order: " + cachedResponse.getOrderId());
                 return cachedResponse;
             } catch (JsonProcessingException e) {
-                System.out.println("❌ Failed to parse cached idempotent response");
                 throw new RuntimeException("Failed to parse idempotent response", e);
             }
         }
+
+        // Mock saga failure rule:
+        // amount <= 1000 => SUCCESS
+        // amount > 1000  => FAILED
+        PaymentStatus finalStatus = request.getAmount() > 1000
+                ? PaymentStatus.FAILED
+                : PaymentStatus.SUCCESS;
 
         Payment payment = Payment.builder()
                 .id(UUID.randomUUID())
                 .orderId(request.getOrderId())
                 .amount(request.getAmount())
-                .status(PaymentStatus.SUCCESS)
+                .status(finalStatus)
                 .createdAt(Instant.now())
                 .build();
 
@@ -73,21 +81,24 @@ public class PaymentService {
                 .createdAt(payment.getCreatedAt())
                 .build();
 
-        if (idempotencyKey != null) {
-            try {
-                idempotencyKeyRepository.save(
-                        IdempotencyKey.builder()
-                                .id(idempotencyKey)
-                                .response(objectMapper.writeValueAsString(response))
-                                .createdAt(Instant.now())
-                                .build()
-                );
-                System.out.println("🗂️ Idempotency response saved for key: " + idempotencyKey);
-            } catch (JsonProcessingException e) {
-                System.out.println("❌ Failed to serialize idempotent response");
-                throw new RuntimeException("Failed to serialize idempotent response", e);
-            }
-        }
+       if (idempotencyKey != null && idempotencyKeyRepository.existsById(idempotencyKey)) {
+    System.out.println("♻️ Idempotency hit for key: " + idempotencyKey);
+
+    IdempotencyKey existing = idempotencyKeyRepository.findById(idempotencyKey).orElseThrow();
+    try {
+        PaymentResponse cachedResponse = objectMapper.readValue(existing.getResponse(), PaymentResponse.class);
+        System.out.println("✅ Returning cached payment response for order: " + cachedResponse.getOrderId());
+        return cachedResponse;
+    } catch (JsonProcessingException e) {
+        throw new RuntimeException("Failed to parse idempotent response", e);
+    }
+}
+
+// Simulate technical failure for retry + DLQ demo
+if (request.getAmount() == 9999) {
+    System.out.println("💥 Simulated technical failure for order: " + request.getOrderId());
+    throw new RuntimeException("Simulated payment processing failure");
+}
 
         PaymentEvent event = PaymentEvent.builder()
                 .orderId(payment.getOrderId())

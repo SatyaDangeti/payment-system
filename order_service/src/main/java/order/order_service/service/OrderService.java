@@ -1,3 +1,5 @@
+
+
 package order.order_service.service;
 
 import java.time.Instant;
@@ -14,27 +16,32 @@ import order.order_service.model.Order;
 import order.order_service.model.OrderStatus;
 import order.order_service.repository.OrderRepository;
 
-
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    
-      private final OrderRepository orderRepository;
-    private final OrderEventProducer producer;
-    public OrderResponse  createOrder(CreateOrderRequest request){
 
-        Order order =Order.builder()
-        .id(UUID.randomUUID())
-        .amount(request.getAmount())
-        .status(OrderStatus.CREATED)
-        .createdAt(Instant.now())
-        .build();
+    private final OrderRepository orderRepository;
+    private final OrderEventProducer producer;
+
+    public OrderResponse createOrder(CreateOrderRequest request) {
+
+        Order order = Order.builder()
+                .id(UUID.randomUUID())
+                .amount(request.getAmount())
+                .status(OrderStatus.CREATED)
+                .createdAt(Instant.now())
+                .build();
 
         orderRepository.save(order);
+
+        System.out.println("🟢 Order saved in DB: " + order.getId());
+
         producer.publish(OrderCreatedEvent.builder()
                 .orderId(order.getId())
                 .amount(order.getAmount())
                 .build());
+
+        System.out.println("🚀 Order-created event published for order: " + order.getId());
 
         return OrderResponse.builder()
                 .id(order.getId())
@@ -43,16 +50,18 @@ public class OrderService {
                 .createdAt(order.getCreatedAt())
                 .build();
     }
-    public void confirmOrder(UUID orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow();
-        order.setStatus(OrderStatus.CONFIRMED);
-        orderRepository.save(order);
-    }
 
-    public void cancelOrder(UUID orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow();
-        order.setStatus(OrderStatus.CANCELLED);
-        orderRepository.save(order);
-    }
+ public void confirmOrder(UUID orderId) {
+    Order order = orderRepository.findById(orderId).orElseThrow();
+    order.setStatus(OrderStatus.CONFIRMED);
+    orderRepository.save(order);
+    System.out.println("✅ Order status updated to CONFIRMED for order: " + orderId);
 }
 
+public void cancelOrder(UUID orderId) {
+    Order order = orderRepository.findById(orderId).orElseThrow();
+    order.setStatus(OrderStatus.CANCELLED);
+    orderRepository.save(order);
+    System.out.println("❌ Order status updated to CANCELLED for order: " + orderId);
+}
+}
