@@ -1,17 +1,54 @@
-<div style="padding: 24px; max-width: 700px; margin: auto; font-family: Arial;">
-  <h1>Payment Portfolio App</h1>
+<div class="page">
+  <div class="card">
+    <h1>Payment System Demo</h1>
 
-  <label>Amount:</label>
-  <input [(ngModel)]="amount" type="number" />
-  <button (click)="createFlow()">Create Order + Payment</button>
+    <!-- <p class="subtitle">
+      Angular → API Gateway → Order Service → Kafka → Payment Service
+    </p> -->
 
-  <div *ngIf="order" style="margin-top: 20px;">
-    <h3>Order</h3>
-    <pre>{{ order | json }}</pre>
-  </div>
+    <div class="form-group">
+      <label>Amount</label>
+      <input type="number" [(ngModel)]="amount" placeholder="Enter amount" />
+    </div>
 
-  <div *ngIf="payment" style="margin-top: 20px;">
-    <h3>Payment</h3>
-    <pre>{{ payment | json }}</pre>
+    <button (click)="createOrder()" [disabled]="loading">
+      {{ loading ? 'Processing...' : 'Create Order' }}
+    </button>
+
+    <!-- <div class="hint">
+      <p><b>500 / 700 / 800</b> → Payment SUCCESS → Order CONFIRMED</p>
+      <p><b>1700</b> → Payment FAILED → Order CANCELLED</p>
+      <p><b>9999</b> → Retry + DLQ demo</p>
+    </div> -->
+
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+
+    <div *ngIf="order" class="result">
+      <h2>Order Details</h2>
+
+      <div class="row">
+        <span>Order ID</span>
+        <strong>{{ order.id }}</strong>
+      </div>
+
+      <div class="row">
+        <span>Amount</span>
+        <strong>{{ order.amount }}</strong>
+      </div>
+
+      <div class="row">
+        <span>Status</span>
+        <strong [ngClass]="order.status.toLowerCase()">
+          {{ order.status }}
+        </strong>
+      </div>
+
+      <div class="row">
+        <span>Created At</span>
+        <strong>{{ order.createdAt }}</strong>
+      </div>
+    </div>
   </div>
 </div>

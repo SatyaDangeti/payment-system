@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import payment.payment_service.dto.PaymentRequest;
 import payment.payment_service.dto.PaymentResponse;
@@ -26,14 +27,15 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PaymentResponse createPayment(
-            @RequestBody PaymentRequest request,
-            @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey
-    ) {
-        return paymentService.createPayment(request, idempotencyKey);
-    }
+   @PostMapping
+@ResponseStatus(HttpStatus.CREATED)
+public PaymentResponse createPayment(
+        @Valid @RequestBody PaymentRequest request,
+        @RequestHeader(value = "Idempotency-Key", required = false)
+        String idempotencyKey) {
+
+    return paymentService.createPayment(request, idempotencyKey);
+}
 
     @GetMapping("/{id}")
     public PaymentResponse getPayment(@PathVariable UUID id) {

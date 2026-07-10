@@ -64,4 +64,15 @@ public void cancelOrder(UUID orderId) {
     orderRepository.save(order);
     System.out.println("❌ Order status updated to CANCELLED for order: " + orderId);
 }
+public OrderResponse getOrder(UUID orderId) {
+    Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+
+    return OrderResponse.builder()
+            .id(order.getId())
+            .amount(order.getAmount())
+            .status(order.getStatus())
+            .createdAt(order.getCreatedAt())
+            .build();
+}
 }

@@ -2,8 +2,8 @@ package payment.payment_service.dto;
 
 import java.util.UUID;
 
-import org.antlr.v4.runtime.misc.NotNull;
-
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,10 +16,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentRequest {
-    @NotNull
+    @NotNull(message = "Order ID is required")
 
     private UUID orderId;
-    @NotNull
+    @NotNull(message = "Amount is required")
+    @Positive(message = "Amount must be greater than zero")
     private Double amount;
     
 }

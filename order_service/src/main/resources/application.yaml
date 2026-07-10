@@ -5,6 +5,11 @@ spring:
   application:
     name: order_service
 
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
   datasource:
     url: jdbc:postgresql://localhost:5432/payments
     username: postgres
@@ -26,6 +31,11 @@ spring:
     consumer:
       group-id: order-group
       auto-offset-reset: earliest
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
