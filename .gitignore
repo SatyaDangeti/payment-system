@@ -1,11 +1,3 @@
-target/
-*.log
-*.class
-*.jar
-*.war
-*.iml
-.idea/
+*.tar
+**/target/
 .vscode/
-node_modules/
-dist/
-.env

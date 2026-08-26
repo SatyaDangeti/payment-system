@@ -20,7 +20,9 @@ public class KafkaProducerConfig {
     public ProducerFactory<String, PaymentEvent> producerFactory() {
         Map<String, Object> config = new HashMap<>();
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, 
+            System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+        );
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
@@ -29,7 +31,9 @@ public class KafkaProducerConfig {
      @Bean
     public ProducerFactory<Object, Object> genericProducerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, 
+            System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+        );
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return new DefaultKafkaProducerFactory<>(props);

@@ -11,9 +11,9 @@ spring:
     path: /swagger-ui.html
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/payments
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -27,7 +27,7 @@ spring:
           time_zone: UTC
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: order-group
       auto-offset-reset: earliest

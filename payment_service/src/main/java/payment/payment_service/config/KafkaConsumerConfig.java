@@ -31,7 +31,9 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, OrderCreatedEvent> orderEventConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, 
+                System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+        );
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "payment-group");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -50,7 +52,9 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, String> dlqStringConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+        );
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "payment-dlq-group");
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
@@ -64,7 +68,9 @@ public class KafkaConsumerConfig {
     @Bean
     public ProducerFactory<Object, Object> dlqProducerFactory() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, 
+                System.getenv().getOrDefault("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")
+        );
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return new DefaultKafkaProducerFactory<>(props);
