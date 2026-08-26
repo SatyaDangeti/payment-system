@@ -1,0 +1,36 @@
+name: Payment System CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build Order Service
+        working-directory: order_service
+        run: mvn clean package -DskipTests
+
+      - name: Build Payment Service
+        working-directory: payment_service
+        run: mvn clean package -DskipTests
+
+      - name: Build Notification Service
+        working-directory: notification_service
+        run: mvn clean package -DskipTests
