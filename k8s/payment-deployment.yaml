@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: payment-service
-          image: payment-service:v3
+          image: bobby0307/payment-service:latest
           imagePullPolicy: IfNotPresent
 
           envFrom:

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: notification-service:v32
+          image: bobby0307/notification-service:latest
           imagePullPolicy: IfNotPresent
           envFrom:
             - configMapRef:
