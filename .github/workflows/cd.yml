@@ -1,0 +1,26 @@
+name: Payment System CD
+
+on:
+  push:
+    branches:
+      - main
+      - saga-implementation
+
+jobs:
+  validate-kubernetes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Kubernetes manifests
+        run: |
+          kubectl apply --dry-run=client -f k8s/config.yaml
+          kubectl apply --dry-run=client -f k8s/kafka.yaml
+          kubectl apply --dry-run=client -f k8s/postgres.yaml
+          kubectl apply --dry-run=client -f k8s/redis.yaml
+          kubectl apply --dry-run=client -f k8s/zookeeper.yaml
+          kubectl apply --dry-run=client -f k8s/order-deployment.yaml
+          kubectl apply --dry-run=client -f k8s/payment-deployment.yaml
+          kubectl apply --dry-run=client -f k8s/notification-deployment.yaml
