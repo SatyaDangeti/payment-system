@@ -49,17 +49,22 @@ jobs:
           context: ./order_service
           push: true
           tags: bobby0307/order-service:latest
+                bobby0307/order-service:${{ github.sha }}
 
       - name: Build and push Payment Service
         uses: docker/build-push-action@v6
         with:
           context: ./payment_service
           push: true
-          tags: bobby0307/payment-service:latest
+          tags: 
+            bobby0307/payment-service:latest
+            bobby0307/payment-service:${{ github.sha }}
 
       - name: Build and push Notification Service
         uses: docker/build-push-action@v6
         with:
           context: ./notification_service
           push: true
-          tags: bobby0307/notification-service:latest
+          tags: 
+            bobby0307/notification-service:latest
+            bobby0307/notification-service:${{ github.sha }}
