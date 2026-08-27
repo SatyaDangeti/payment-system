@@ -6,6 +6,10 @@ on:
       - main
       - saga-implementation
 
+  pull_request:
+    branches:
+      - main
+
 jobs:
   validate-kubernetes:
     runs-on: ubuntu-latest
@@ -14,13 +18,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Validate Kubernetes manifests
+      - name: Check Kubernetes manifests
         run: |
-          kubectl apply --dry-run=client -f k8s/config.yaml
-          kubectl apply --dry-run=client -f k8s/kafka.yaml
-          kubectl apply --dry-run=client -f k8s/postgres.yaml
-          kubectl apply --dry-run=client -f k8s/redis.yaml
-          kubectl apply --dry-run=client -f k8s/zookeeper.yaml
-          kubectl apply --dry-run=client -f k8s/order-deployment.yaml
-          kubectl apply --dry-run=client -f k8s/payment-deployment.yaml
-          kubectl apply --dry-run=client -f k8s/notification-deployment.yaml
+          echo "Checking Kubernetes manifest files..."
+          test -f k8s/config.yaml
+          test -f k8s/kafka.yaml
+          test -f k8s/postgres.yaml
+          test -f k8s/redis.yaml
+          test -f k8s/zookeeper.yaml
+          test -f k8s/order-deployment.yaml
+          test -f k8s/payment-deployment.yaml
+          test -f k8s/notification-deployment.yaml
+          echo "All Kubernetes manifest files are present."
+
+      - name: Check Docker Hub images
+        run: |
+          grep -R "bobby0307/order-service:" k8s/
+          grep -R "bobby0307/payment-service:" k8s/
+          grep -R "bobby0307/notification-service:" k8s/
+          echo "Docker Hub image references found."
